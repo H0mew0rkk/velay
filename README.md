@@ -3,7 +3,7 @@
 使用方法见 [下方「使用」章节](#使用)。
 
 
-# soundpad
+# velay
 
 一个 Windows 下的语音音效播放器(类 [Soundpad](https://enterprise.leppsoft.com/) 的思路),
 用 Rust 写。按下热键把指定音频"播"进游戏语音频道(如 CS),平时自动使用真实麦克风,
