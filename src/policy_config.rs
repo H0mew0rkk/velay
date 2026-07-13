@@ -33,6 +33,10 @@ pub struct IPolicyConfig_Vtbl {
     pub SetProcessingPeriod: unsafe extern "system" fn(*mut c_void, PCWSTR, *mut i64) -> HRESULT,
     pub GetShareMode: unsafe extern "system" fn(*mut c_void, PCWSTR, *mut c_void) -> HRESULT,
     pub SetShareMode: unsafe extern "system" fn(*mut c_void, PCWSTR, *mut c_void) -> HRESULT,
+    // ⚠ 警告:下面 Get/SetPropertyValue 的参数列表**并不完整/准确**——
+    // 真实接口在不同逆向资料里对是否含 `BOOL bFxStore` 参数存在分歧。
+    // 这里只作为 vtable 占位以保证 SetDefaultEndpoint 的槽位序号正确,
+    // **切勿直接调用这两个方法**,否则栈参数会错乱。
     pub GetPropertyValue:
         unsafe extern "system" fn(*mut c_void, PCWSTR, *const c_void, *mut c_void) -> HRESULT,
     pub SetPropertyValue:
