@@ -25,6 +25,20 @@ pub fn run() {
     // 启动清理(init)与退出钩子的注册统一在 main 里做,这里不再重复。
 
     let config = Config::load();
+
+    // 如实告知功能边界:daemon 是阶段四的旧模式,后续阶段的功能都长在 GUI 控制器上,
+    // 没有回填到这里。用户若以为配置里的设置对 daemon 也生效,会遇到莫名其妙的行为
+    // ——尤其是路由模式:他以为只切游戏,实际切的是系统默认(微信也会被牵连)。
+    println!("⚠ daemon 是旧的 per-key 模式,只支持「全局」切换系统默认麦克风。");
+    println!("  不支持:仅选中程序路由 / 本地监听 / 音量设置——这些请用图形界面");
+    println!("  (不带任何子命令直接运行本程序即可)。");
+    if config.routing_mode == crate::config::RoutingMode::PerApp {
+        println!();
+        println!("⚠ 你的配置是「仅选中程序」模式,但 daemon 不支持,仍会切换系统默认麦克风");
+        println!("  (播放期间微信等程序也会收到音效)。要用 per-app 路由请改用图形界面。");
+    }
+    println!();
+
     if config.hotkeys.is_empty() {
         println!("⚠ config.json 中没有配置热键。");
         println!("  请编辑 config.json,添加 \"hotkeys\" 字段:");
@@ -128,7 +142,7 @@ fn handle_hotkey(file_path: &str, state: &Arc<Mutex<PlaybackState>>) {
 }
 
 /// 把配置里的键名字符串转成 win-hotkeys 的 VKey 枚举值。
-fn parse_vkey(name: &str) -> Option<VKey> {
+pub fn parse_vkey(name: &str) -> Option<VKey> {
     match name.to_lowercase().as_str() {
         "numpad0" => Some(VKey::Numpad0),
         "numpad1" => Some(VKey::Numpad1),
